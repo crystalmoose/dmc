@@ -159,8 +159,10 @@ label battle_victory:
                     i.exp=0
                     i.level += 1
                     narrator("[i.name] Leveled Up![nw10]")
-            gain += int(j.level*difficulty)
-        ether += gain*5
+            #gain += int(j.level*difficulty)
+            gain += int(j.level*20)
+        #Ether Editing
+        ether += gain
         narrator("You earned [gain] Ether![nw10]") 
         for j in enemy:
             if j.drop != "" and renpy.random.random()<.01:
@@ -376,28 +378,29 @@ init -1 python:
         
         def getexp(self, target):
             if self.vital >0:
+            #Mad XP Gain, tyvm!
                 if self.level +4 < target.level:
-                    self.exp +=  int(24*difficulty)
+                    self.exp +=  int(24*difficulty*10)
                 elif self.level +4 == target.level:
-                    self.exp +=  int(20*difficulty)
+                    self.exp +=  int(20*difficulty*10)
                 elif self.level +3 == target.level:
-                    self.exp +=  int(16*difficulty)
+                    self.exp +=  int(16*difficulty*10)
                 elif self.level +2 == target.level:
-                    self.exp +=  int(12*difficulty)
+                    self.exp +=  int(12*difficulty*10)
                 elif self.level +1 == target.level:
-                    self.exp +=  int(10*difficulty)
+                    self.exp +=  int(10*difficulty*10)
                 elif self.level == target.level:
-                    self.exp +=  int(8*difficulty)
+                    self.exp +=  int(8*difficulty*10)
                 elif self.level-1  == target.level:
-                    self.exp +=  int(6*difficulty)
+                    self.exp +=  int(6*difficulty*10)
                 elif self.level-2 == target.level:
-                    self.exp +=  int(4*difficulty)
+                    self.exp +=  int(4*difficulty*10)
                 elif self.level-3 == target.level:
-                    self.exp +=  int(2*difficulty)
+                    self.exp +=  int(2*difficulty*10)
                 elif self.level-4 == target.level:
-                    self.exp += int(1*difficulty)
+                    self.exp += int(1*difficulty*10)
                 elif self.level-5 == target.level:
-                    self.exp += int(.5*difficulty)
+                    self.exp += int(.5*difficulty*10)
         
         def auto(self):
             if self.vital == 0:
