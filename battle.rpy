@@ -160,7 +160,7 @@ label battle_victory:
                     i.level += 1
                     narrator("[i.name] Leveled Up![nw10]")
             gain += int(j.level*difficulty)
-        ether += gain
+        ether += gain*5
         narrator("You earned [gain] Ether![nw10]") 
         for j in enemy:
             if j.drop != "" and renpy.random.random()<.01:
@@ -575,7 +575,7 @@ init -1 python:
             if hitrate > renpy.random.randint(0,100):
                 if hitrate-75 > renpy.random.randint(0,100):
                     renpy.music.play("critical", channel="sound2")
-                    # Edit here
+                    # Edit here by CMoose
                     if self in party:
                         damage = 0
                         critical=False
@@ -587,12 +587,13 @@ init -1 python:
                         outlines=[(2, "fff"), (4, "#fffc"), (0,"#0006",6,6)]))    
                 else:
                     renpy.music.play("hit", channel="sound2")
-                    # Edit here
+                    # Edit here by CMoose
                     if self in party:
                         damage = 0
                     else:
                         damage = int(damagerate*(1+renpy.random.random()/4)) 
-                    critical=False
+                    #Changed to True - Increase strip rate
+                    critical=True
                     renpy.show("damage", at_list=[popup(self.xpos)], layer="topscreen",
                                 what=Text("%s"%damage, size=100, bold=True, italic=True, color= "#ff3",
                                     outlines=[(2, "fff"), (4, "#fffc"), (0,"#0006",6,6)]))    
@@ -606,67 +607,71 @@ init -1 python:
                     renpy.show(self.image, at_list=[shake_center]) 
                 hard(.7*persistent.battlespeed)
                 renpy.hide("damage", layer="topscreen") 
-                if critical==True:
-                    if self.vital <= self.max_vital*3/4 and self.cos==1:
-                        self.cos=2
-                        if self.outfit != None:
-                            self.outfit.cos = 2
-                            self.outfit.image_current = "{} torn".format(self.outfit.image)
-                        if persistent.tornskip == False and persistent.cutin:
-                            config.skipping = None  
-                        if persistent.cutin and config.skipping == None:
-                            load(["{} torn".format(self.image),"cutin {} torn".format(self.image)])
-                            renpy.show("semiblack", layer="topscreen")
-                            renpy.with_statement(Dissolve(.2))
-                            self.image_current = "{} torn".format(self.image)
-                            if self in party:
-                                renpy.show(self.image_current, layer="screens", zorder=2)
+                #CMoose More edits
+                #Added if clause, indented to next comment.
+                if self not in party:
+                    if critical==True:
+                        if self.vital <= self.max_vital*3/4 and self.cos==1:
+                            self.cos=2
+                            if self.outfit != None:
+                                self.outfit.cos = 2
+                                self.outfit.image_current = "{} torn".format(self.outfit.image)
+                            if persistent.tornskip == False and persistent.cutin:
+                                config.skipping = None  
+                            if persistent.cutin and config.skipping == None:
+                                load(["{} torn".format(self.image),"cutin {} torn".format(self.image)])
+                                renpy.show("semiblack", layer="topscreen")
+                                renpy.with_statement(Dissolve(.2))
+                                self.image_current = "{} torn".format(self.image)
+                                if self in party:
+                                    renpy.show(self.image_current, layer="screens", zorder=2)
+                                else:
+                                    renpy.show(self.image_current)
+                                renpy.music.play("crash", channel="sound")
+                                if persistent.battlespeed==1:
+                                    renpy.show("cutin {} torn".format(self.image), layer="topscreen", at_list=[cutin_slow(self.ypos)])
+                                    renpy.pause(1.5)
+                                else:
+                                    renpy.show("cutin {} torn".format(self.image), layer="topscreen", at_list=[cutin_fast(self.ypos)])
+                                    renpy.pause(.8)
+                                renpy.scene(layer="topscreen")
                             else:
-                                renpy.show(self.image_current)
-                            renpy.music.play("crash", channel="sound")
-                            if persistent.battlespeed==1:
-                                renpy.show("cutin {} torn".format(self.image), layer="topscreen", at_list=[cutin_slow(self.ypos)])
-                                renpy.pause(1.5)
+                                self.image_current = "{} torn".format(self.image)
+                                if self in party:
+                                    renpy.show(self.image_current, layer="screens", zorder=2)
+                                else:
+                                    renpy.show(self.image_current)
+                        elif self.vital <= self.max_vital/2 and self.cos==2:
+                            self.cos=3
+                            if self.outfit != None:
+                                self.outfit.cos = 3
+                                self.outfit.image_current = "{} naked".format(self.outfit.image)
+                            if persistent.tornskip == False and persistent.cutin:
+                                config.skipping = None  
+                            if persistent.cutin and config.skipping == None:
+                                load(["{} naked".format(self.image),"cutin {} naked".format(self.image)])
+                                renpy.show("semiblack", layer="topscreen")
+                                renpy.with_statement(Dissolve(.2))
+                                self.image_current = "{} naked".format(self.image)
+                                if self in party:
+                                    renpy.show(self.image_current, layer="screens", zorder=2)
+                                else:
+                                    renpy.show(self.image_current)               
+                                renpy.music.play("crash", channel="sound")
+                                if persistent.battlespeed==1:
+                                    renpy.show("cutin {} naked".format(self.image), layer="topscreen", at_list=[cutin_slow(self.ypos)])                        
+                                    renpy.pause(1.2)        
+                                else:
+                                    renpy.show("cutin {} naked".format(self.image), layer="topscreen", at_list=[cutin_fast(self.ypos)])                        
+                                    renpy.pause(.7)
+                                renpy.scene(layer="topscreen")
                             else:
-                                renpy.show("cutin {} torn".format(self.image), layer="topscreen", at_list=[cutin_fast(self.ypos)])
-                                renpy.pause(.8)
-                            renpy.scene(layer="topscreen")
-                        else:
-                            self.image_current = "{} torn".format(self.image)
-                            if self in party:
-                                renpy.show(self.image_current, layer="screens", zorder=2)
-                            else:
-                                renpy.show(self.image_current)
-                    elif self.vital <= self.max_vital/2 and self.cos==2:
-                        self.cos=3
-                        if self.outfit != None:
-                            self.outfit.cos = 3
-                            self.outfit.image_current = "{} naked".format(self.outfit.image)
-                        if persistent.tornskip == False and persistent.cutin:
-                            config.skipping = None  
-                        if persistent.cutin and config.skipping == None:
-                            load(["{} naked".format(self.image),"cutin {} naked".format(self.image)])
-                            renpy.show("semiblack", layer="topscreen")
-                            renpy.with_statement(Dissolve(.2))
-                            self.image_current = "{} naked".format(self.image)
-                            if self in party:
-                                renpy.show(self.image_current, layer="screens", zorder=2)
-                            else:
-                                renpy.show(self.image_current)               
-                            renpy.music.play("crash", channel="sound")
-                            if persistent.battlespeed==1:
-                                renpy.show("cutin {} naked".format(self.image), layer="topscreen", at_list=[cutin_slow(self.ypos)])                        
-                                renpy.pause(1.2)        
-                            else:
-                                renpy.show("cutin {} naked".format(self.image), layer="topscreen", at_list=[cutin_fast(self.ypos)])                        
-                                renpy.pause(.7)
-                            renpy.scene(layer="topscreen")
-                        else:
-                            self.image_current = "{} naked".format(self.image)
-                            if self in party:
-                                renpy.show(self.image_current, layer="screens", zorder=2)
-                            else:
-                                renpy.show(self.image_current)
+                                self.image_current = "{} naked".format(self.image)
+                                if self in party:
+                                    renpy.show(self.image_current, layer="screens", zorder=2)
+                                else:
+                                    renpy.show(self.image_current)
+                #End CMoose Edit
                 if self.cos==3 and user.skill == Capture and self.vital > 0:
                     if self.level > user.level or capturing==False:
                         pass
